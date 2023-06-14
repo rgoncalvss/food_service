@@ -23,7 +23,7 @@ class LoginScreenTopImage extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(100),
                 child: Image.asset(
-                  'assets/images/logo.png',
+                  'assets/images/logo.jpeg',
                   height: 200,
                   width: 300,
                   fit: BoxFit.cover,

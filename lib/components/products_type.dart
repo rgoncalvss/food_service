@@ -1,29 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class TaskTipoProduto extends StatelessWidget {
-  const TaskTipoProduto({Key? key}) : super(key: key);
+import '../AppState.dart';
+
+class TaskTipoProduto extends StatefulWidget {
+  final String urlImage;
+  final int showTask;
+
+  const TaskTipoProduto(this.urlImage, this.showTask, {Key? key}) : super(key: key);
 
   @override
+  State<TaskTipoProduto> createState() => _TaskTipoProdutoState();
+}
+
+class _TaskTipoProdutoState extends State<TaskTipoProduto> {
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Consumer<AppState>(builder: (context, appState, _){return SizedBox(
       height: 50,
       width: 50,
       child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            appState.updateShowTasks(widget.showTask);
+          },
           style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.zero,
+              padding: EdgeInsets.zero,
+              primary: Color.fromRGBO(255, 255, 153, 1) // 255,255,153,1
           ),
           child: SizedBox(
-            width: 50,
-            height: 50,
+            width: 40,
+            height: 40,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: Image.asset(
-                "assets/images/logo.png",
+                widget.urlImage,
                 fit: BoxFit.cover,
               ),
             ),
           )),
-    );
+    );});
   }
 }

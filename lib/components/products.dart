@@ -1,126 +1,77 @@
 import 'package:flutter/material.dart';
 
-class Produtos extends StatelessWidget {
-  const Produtos({Key? key}) : super(key: key);
+class TaskProduto extends StatelessWidget {
+  final String nomeProduto;
+  final String ingredientesProduto;
+  final String precoProduto;
+  final String urlImage;
+
+  const TaskProduto(this.nomeProduto, this.ingredientesProduto, this.precoProduto, this.urlImage, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        child: Stack(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: Color(0xFFAB0307),
-              ),
-              height: 140,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: Colors.white,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Container(
+          color: const Color.fromRGBO(255, 133, 102, 1), // 255,153,128
+          height: 100,
+          child: Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(4)),
+                    height: 100,
+                    alignment: AlignmentDirectional.centerStart,
+                    child: ClipOval(
+                        child: Image.asset(urlImage)),
                   ),
-                  height: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color: Colors.black12,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(nomeProduto,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                overflow: TextOverflow.ellipsis)),
+                        Expanded(
+                          child: Text(ingredientesProduto,
+                              style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  overflow: TextOverflow.visible)),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Image.asset(
-                            'assets/images/hamburger.jpg',
-                            height: 100,
-                            width: 72,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      height: 50,
+                      width: 91,
+                      child: ElevatedButton(
+                          onPressed: () {},
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Text(
-                                'Lanche',
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Salada, Bacon, Ovo, Queijo, Maionese, Cebola',
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              const Icon(Icons.shopping_cart),
+                              Text(precoProduto)
                             ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          height: 100,
-                          width: 60,
-                          child: const ElevatedButton(
-                            onPressed: null,
-                            child: Column(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Comprar',
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: 8,
-                      ),
-                      child: SizedBox(
-                        width: 200,
-                      ),
+                          )),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text(
-                        "Valor: 59.00",
-                        style: TextStyle(
-                            color: Colors.white, fontSize: 16),
-                      ),
-                    ),
-                  ],
-                )
-              ],
+                  )
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );

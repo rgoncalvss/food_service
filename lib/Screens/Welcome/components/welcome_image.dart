@@ -34,7 +34,7 @@ class WelcomeImage extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(300),
               child: Image.asset(
-                'assets/images/logo.png',
+                'assets/images/logo.jpeg',
                 height: 250,
                 width: MediaQuery.of(context).size.width,
                 fit: BoxFit.cover,
