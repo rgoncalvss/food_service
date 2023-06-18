@@ -8,7 +8,16 @@ import 'AppState.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Inicialize o Firebase aqui
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+        apiKey: "AIzaSyD3-uDjOHlzHWkpjJDngIMuCaq4T6dYOu4",
+        authDomain: "foodservice-78cae.firebaseapp.com",
+        projectId: "foodservice-78cae",
+        storageBucket: "foodservice-78cae.appspot.com",
+        messagingSenderId: "857760438028",
+        appId: "1:857760438028:web:fbc358f1af3669cfa71b29",
+        measurementId: "G-3ZG9CTX6MZ"),
+  ); // Inicialize o Firebase aqui
   runApp(ChangeNotifierProvider(
       create: (context) => AppState(), child: const MyApp()));
 }

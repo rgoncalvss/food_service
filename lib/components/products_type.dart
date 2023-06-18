@@ -6,8 +6,9 @@ import '../AppState.dart';
 class TaskTipoProduto extends StatefulWidget {
   final String urlImage;
   final int showTask;
+  final int len;
 
-  const TaskTipoProduto(this.urlImage, this.showTask, {Key? key}) : super(key: key);
+  const TaskTipoProduto(this.urlImage, this.showTask, this.len,  {Key? key}) : super(key: key);
 
   @override
   State<TaskTipoProduto> createState() => _TaskTipoProdutoState();
@@ -21,7 +22,7 @@ class _TaskTipoProdutoState extends State<TaskTipoProduto> {
       width: 50,
       child: ElevatedButton(
           onPressed: () {
-            appState.updateShowTasks(widget.showTask);
+            appState.updateShowTasks(widget.showTask, widget.len);
           },
           style: ElevatedButton.styleFrom(
               padding: EdgeInsets.zero,

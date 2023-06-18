@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
@@ -13,12 +14,20 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    getAllTaskProdutos();
+  }
+
   final String nomeEstabelecimento = "Food Service";
   final String enderecoEstabelecimento = "Rua do Inatel, nº 1000";
   final String telefoneEstabelecimento = "(35) 9 0000-0000";
   final String tempoEstabelecimento = "30~40min. de espera";
 
   int stateTasks = 0;
+  int childCountLen2 = 0;
 
   List<TaskProduto> taskProdutos_lanches = [
     const TaskProduto(
@@ -93,6 +102,34 @@ class _MenuScreenState extends State<MenuScreen> {
     const TaskProduto(
         "Doce", "Ingredientes...", "RS 11,90", "assets/images/candy_icon.webp"),
   ];
+
+  List<TaskProduto> testeProdutos = [];
+
+  Future<void> getAllTaskProdutos() async {
+    try {
+      QuerySnapshot querySnapshot =
+      await FirebaseFirestore.instance.collection("cardapio").get();
+
+      for (QueryDocumentSnapshot docSnapshot in querySnapshot.docs) {
+        Map<String, dynamic> dados = docSnapshot.data() as Map<String, dynamic>;
+
+        // Aqui você pode manipular cada documento individualmente
+        String nome = docSnapshot['nome'];
+        String ingredientes = docSnapshot['ingredientes'];
+        String urlFoto = docSnapshot['urlFoto'];
+        // ... outros atributos
+
+        TaskProduto taskProduto =
+        TaskProduto(nome, ingredientes, "RS 19,90", urlFoto);
+
+        testeProdutos.add(taskProduto);
+      }
+    } catch (e) {
+      // Trate qualquer erro ocorrido durante a obtenção dos documentos
+      print('Erro ao obter documentos: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -205,16 +242,18 @@ class _MenuScreenState extends State<MenuScreen> {
                           ),
                         ),
                       ),
-                      const SliverAppBar(
+                      SliverAppBar(
                         flexibleSpace: Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              TaskTipoProduto(
-                                  "assets/images/hamburger_icon.webp", 1),
-                              TaskTipoProduto("assets/images/drink_icon.png", 2),
-                              TaskTipoProduto("assets/images/candy_icon.webp", 3),
+                              TaskTipoProduto("assets/images/hamburger_icon.webp",
+                                  1, testeProdutos.length),
+                              TaskTipoProduto("assets/images/drink_icon.png", 2,
+                                  taskProdutos_bebidas.length),
+                              TaskTipoProduto("assets/images/candy_icon.webp", 3,
+                                  taskProdutos_doces.length),
                             ],
                           ),
                         ),
@@ -229,9 +268,11 @@ class _MenuScreenState extends State<MenuScreen> {
                                   (BuildContext context, int index) {
                                 return Consumer<AppState>(builder: (context, appState, _) {
                                   stateTasks = appState.stateTaskProduto;
+                                  childCountLen2 = appState.childCountLen;
+                                  print("quantidade: $childCountLen2");
                                   return buildTaskProdutosList(index);
                                 });
-                              }, childCount: taskProdutos_lanches.length)),
+                              }, childCount: Provider.of<AppState>(context).childCountLen)),
                       SliverToBoxAdapter(
                         child: Column(
                           children: [
@@ -261,7 +302,8 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget buildTaskProdutosList(int index) {
     switch (stateTasks) {
       case 1:
-        return taskProdutos_lanches[index];
+      //return taskProdutos_lanches[index];
+        return testeProdutos[index];
         break;
 
       case 2:
