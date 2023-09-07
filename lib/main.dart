@@ -1,22 +1,28 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:food_service_fetin/Screens/Welcome/welcome_screen.dart';
 import 'package:food_service_fetin/constants.dart';
 import 'package:provider/provider.dart';
 
 import 'AppState.dart';
 
-void main() async {
+Future<void> main() async {
+  await dotenv.load();
+
+  final FirebaseOptions firebaseOptions = FirebaseOptions(
+    apiKey: dotenv.env['APIKEY'] ?? 'API_URL not found',
+    authDomain: dotenv.env['AUTHDOMAIN'] ?? 'AUTHDOMAIN not found',
+    projectId: dotenv.env['PROJECTID'] ?? 'PROJECTID not found',
+    storageBucket: dotenv.env['STORAGEBUCKET'] ?? 'STORAGEBUCKET not found',
+    messagingSenderId: dotenv.env['MSGSENDERID'] ?? 'MSGSENDERID not found',
+    appId: dotenv.env['APPID'] ?? 'APPID not found',
+    measurementId: dotenv.env['MEASUREID'] ?? 'MEASUREID not found',
+  );
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-        apiKey: "AIzaSyD3-uDjOHlzHWkpjJDngIMuCaq4T6dYOu4",
-        authDomain: "foodservice-78cae.firebaseapp.com",
-        projectId: "foodservice-78cae",
-        storageBucket: "foodservice-78cae.appspot.com",
-        messagingSenderId: "857760438028",
-        appId: "1:857760438028:web:fbc358f1af3669cfa71b29",
-        measurementId: "G-3ZG9CTX6MZ"),
+    options: firebaseOptions,
   );
   runApp(
     MultiProvider(
