@@ -3,18 +3,18 @@ import 'package:provider/provider.dart';
 
 import '../AppState.dart';
 
-class TaskTipoProduto extends StatefulWidget {
-  final String urlImage;
+class ProductType extends StatefulWidget {
+  final String picture;
   final int showTask;
   final int len;
 
-  const TaskTipoProduto(this.urlImage, this.showTask, this.len,  {Key? key}) : super(key: key);
+  const ProductType(this.picture, this.showTask, this.len,  {Key? key}) : super(key: key);
 
   @override
-  State<TaskTipoProduto> createState() => _TaskTipoProdutoState();
+  State<ProductType> createState() => _ProductTypeState();
 }
 
-class _TaskTipoProdutoState extends State<TaskTipoProduto> {
+class _ProductTypeState extends State<ProductType> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AppState>(builder: (context, appState, _){return SizedBox(
@@ -34,7 +34,7 @@ class _TaskTipoProdutoState extends State<TaskTipoProduto> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: Image.asset(
-                widget.urlImage,
+                widget.picture,
                 fit: BoxFit.cover,
               ),
             ),

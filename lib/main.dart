@@ -17,9 +17,16 @@ void main() async {
         messagingSenderId: "857760438028",
         appId: "1:857760438028:web:fbc358f1af3669cfa71b29",
         measurementId: "G-3ZG9CTX6MZ"),
-  ); // Inicialize o Firebase aqui
-  runApp(ChangeNotifierProvider(
-      create: (context) => AppState(), child: const MyApp()));
+  );
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppState>(create: (_) => AppState()),
+        ChangeNotifierProvider<AppStateCart>(create: (_) => AppStateCart()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +37,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Auth',
+      title: 'Food Service',
       theme: ThemeData(
           primaryColor: kPrimaryColor,
           scaffoldBackgroundColor: Colors.white,
