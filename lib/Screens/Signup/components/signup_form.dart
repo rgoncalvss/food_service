@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -14,209 +15,152 @@ class SignUpForm extends StatefulWidget {
   _SignUpFormState createState() => _SignUpFormState();
 }
 
+
 class _SignUpFormState extends State<SignUpForm> {
+  final db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
-  late String email;
-  late String password;
-  late String passwordConfirm;
-  late String firstName;
-  late String lastName;
-  late String address;
+  final _formKey = GlobalKey<FormState>();
+
+  String email = '';
+  String password = '';
+  String passwordConfirm = '';
+  String firstName = '';
+  String lastName = '';
+  String address = '';
+  String userType = '';
   bool _obscureText = true;
   bool emailAlreadyExists = false;
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: TextFormField(
-              onChanged: (value) {
-                setState(() {
-                  email = value;
-                  emailAlreadyExists = false; // Resetar a flag de e-mail existente
-                });
-              },
-              keyboardType: TextInputType.emailAddress,
-              textInputAction: TextInputAction.next,
-              cursorColor: kPrimaryColor,
-              onSaved: (email) {},
-              decoration: const InputDecoration(
-                hintText: "Seu e-mail",
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.person),
-                ),
-              ),
-            ),
+          _buildFormField(
+            label: "Seu e-mail",
+            hintText: "Seu e-mail",
+            icon: Icons.person,
+            onChanged: (value) {
+              setState(() {
+                email = value;
+                emailAlreadyExists = false; // Reset the flag for existing email
+              });
+            },
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
           ),
-          if (emailAlreadyExists) ...[
+          if (emailAlreadyExists)
             const Text(
               "O e-mail já está cadastrado.",
               style: TextStyle(
                 color: Colors.red,
               ),
             ),
-            SizedBox(height: 8.0),
-          ],
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: TextFormField(
-              onChanged: (value) {
-                firstName = value;
+          _buildFormField(
+            label: "Seu nome",
+            hintText: "Seu nome",
+            icon: Icons.person,
+            onChanged: (value) {
+              firstName = value;
+            },
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+          ),
+          _buildFormField(
+            label: "Seu sobrenome",
+            hintText: "Seu sobrenome",
+            icon: Icons.person,
+            onChanged: (value) {
+              lastName = value;
+            },
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+          ),
+          _buildFormField(
+            label: "Seu endereço",
+            hintText: "Seu endereço",
+            icon: Icons.location_on,
+            onChanged: (value) {
+              address = value;
+            },
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+          ),
+          _buildFormField(
+            label: "Sua senha",
+            hintText: "Sua senha",
+            icon: Icons.lock,
+            onChanged: (value) {
+              password = value;
+            },
+            textInputAction: TextInputAction.done,
+            obscureText: _obscureText,
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  _obscureText = !_obscureText;
+                });
               },
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              cursorColor: kPrimaryColor,
-              decoration: const InputDecoration(
-                hintText: "Seu nome",
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.person),
-                ),
+              icon: Icon(
+                _obscureText ? Icons.visibility : Icons.visibility_off,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: TextFormField(
-              onChanged: (value) {
-                lastName = value;
-              },
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              cursorColor: kPrimaryColor,
-              decoration: const InputDecoration(
-                hintText: "Seu sobrenome",
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.person),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: TextFormField(
-              onChanged: (value) {
-                address = value;
-              },
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              cursorColor: kPrimaryColor,
-              decoration: const InputDecoration(
-                hintText: "Seu endereço",
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.location_on),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-            child: TextFormField(
-              onChanged: (value) {
-                password = value;
-              },
-              textInputAction: TextInputAction.done,
-              obscureText: _obscureText,
-              cursorColor: kPrimaryColor,
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                  icon: Icon(
-                    _obscureText ? Icons.visibility : Icons.visibility_off,
-                  ),
-                ),
-                hintText: "Sua senha",
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.lock),
-                ),
-              ),
-            ),
-          ),
-          TextFormField(
+          _buildFormField(
+            label: "Repita sua senha",
+            hintText: "Repita sua senha",
+            icon: Icons.lock,
             onChanged: (value) {
               passwordConfirm = value;
             },
             textInputAction: TextInputAction.done,
             obscureText: _obscureText,
-            cursorColor: kPrimaryColor,
-            decoration: InputDecoration(
-              suffixIcon: IconButton(
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-                icon: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  _obscureText = !_obscureText;
+                });
+              },
+              icon: Icon(
+                _obscureText ? Icons.visibility : Icons.visibility_off,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: RadioListTile(
+                    title: Text("Admin"),
+                    value: 'admin',
+                    groupValue: userType,
+                    onChanged: (value) {
+                      setState(() {
+                        userType = value.toString();
+                      });
+                    },
+                  ),
                 ),
-              ),
-              hintText: "Repita sua senha",
-              prefixIcon: const Padding(
-                padding: EdgeInsets.all(defaultPadding),
-                child: Icon(Icons.lock),
-              ),
+                Expanded(
+                  child: RadioListTile(
+                    title: Text("Cliente"),
+                    value: 'cliente',
+                    groupValue: userType,
+                    onChanged: (value) {
+                      setState(() {
+                        userType = value.toString();
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: defaultPadding * 2),
           ElevatedButton(
-            onPressed: () async {
-              try {
-                if (password == passwordConfirm) {
-                  var signInMethods =
-                  await _auth.fetchSignInMethodsForEmail(email);
-                  if (signInMethods.isEmpty) {
-                    final newUser =
-                    await _auth.createUserWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
-                    if (newUser != null) {
-                      await _auth.currentUser?.updateProfile(
-                          displayName: "$firstName $lastName");
-                      await _auth.currentUser?.reload();
-                      // Salvar o endereço do usuário no Firestore
-                      // ...
-
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return const WelcomeScreen();
-                        }),
-                      );
-                    }
-                  } else {
-                    setState(() {
-                      emailAlreadyExists = true;
-                    });
-                  }
-                } else {
-                  // Senhas não coincidem
-                  Fluttertoast.showToast(
-                    msg: "Senhas não coincidem",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: kPrimaryColor,
-                    textColor: Colors.white,
-                    fontSize: 16.0,
-                  );
-                }
-              } catch (e) {
-                print(e);
-              }
-            },
+            onPressed: () => _handleSignUpButtonPressed(),
             child: Text("Cadastrar".toUpperCase()),
           ),
           const SizedBox(height: defaultPadding),
@@ -237,4 +181,90 @@ class _SignUpFormState extends State<SignUpForm> {
       ),
     );
   }
+
+  Widget _buildFormField({
+    required String label,
+    required String hintText,
+    required IconData icon,
+    required Function(String) onChanged,
+    TextInputType keyboardType = TextInputType.text,
+    TextInputAction textInputAction = TextInputAction.next,
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        onChanged: onChanged,
+        keyboardType: keyboardType,
+        textInputAction: textInputAction,
+        obscureText: obscureText,
+        cursorColor: kPrimaryColor,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hintText,
+          prefixIcon: Padding(
+            padding: EdgeInsets.all(defaultPadding),
+            child: Icon(icon),
+          ),
+          suffixIcon: suffixIcon,
+        ),
+      ),
+    );
+  }
+
+  void _handleSignUpButtonPressed() async {
+    if (_formKey.currentState!.validate()) {
+      if (password == passwordConfirm) {
+        var signInMethods = await _auth.fetchSignInMethodsForEmail(email);
+        if (signInMethods.isEmpty) {
+          try {
+            final newUser = await _auth.createUserWithEmailAndPassword(
+              email: email,
+              password: password,
+            );
+            if (newUser != null) {
+              await _auth.currentUser?.updateProfile(
+                displayName: "$firstName $lastName",
+              );
+              await _auth.currentUser?.reload();
+
+              Map<String, dynamic> user = {
+                'email': email,
+                'firstName': firstName,
+                'lastName': lastName,
+                'address': address,
+                'userType': userType,
+              };
+              await db.collection("users").add(user);
+
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+              );
+            }
+          } catch (e) {
+            print(e);
+          }
+        } else {
+          setState(() {
+            emailAlreadyExists = true;
+          });
+        }
+      } else {
+        // Passwords do not match
+        Fluttertoast.showToast(
+          msg: "Senhas não coincidem",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: kPrimaryColor,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
+    }
+  }
 }
+

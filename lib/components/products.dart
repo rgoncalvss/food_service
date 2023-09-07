@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class TaskProduto extends StatelessWidget {
-  final String nomeProduto;
-  final String ingredientesProduto;
-  final String precoProduto;
-  final String urlImage;
+class Product extends StatelessWidget {
+  final String name;
+  final String ingredients;
+  final String price;
+  final String picture;
 
-  const TaskProduto(this.nomeProduto, this.ingredientesProduto, this.precoProduto, this.urlImage, {Key? key}) : super(key: key);
+  const Product(this.name, this.ingredients, this.price, this.picture, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,21 +28,21 @@ class TaskProduto extends StatelessWidget {
                   height: 100,
                   alignment: AlignmentDirectional.centerStart,
                   child: ClipOval(
-                      child: Image.asset(urlImage)),
+                      child: Image.asset(picture)),
                 ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(nomeProduto,
+                      Text(name,
                           style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 20,
                               overflow: TextOverflow.ellipsis)),
                       Expanded(
-                        child: Text(ingredientesProduto,
+                        child: Text(ingredients,
                             style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 12,
@@ -62,7 +62,7 @@ class TaskProduto extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             const Icon(Icons.shopping_cart),
-                            Text(precoProduto)
+                            Text(price)
                           ],
                         )),
                   ),

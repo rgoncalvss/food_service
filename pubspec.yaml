@@ -41,6 +41,8 @@ dependencies:
   cloud_firestore: ^4.8.0
   fluttertoast: ^8.2.2
   provider: ^5.0.0
+  input_quantity:
+  http: ^1.1.0
 
 
 dev_dependencies:

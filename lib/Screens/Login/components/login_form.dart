@@ -1,12 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:food_service_fetin/Screens/Menu/navigation_screen.dart';
 import 'package:food_service_fetin/Screens/Menu/menu_screen.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
 import '../../../constants.dart';
+import '../../Menu/admin/admin_navigation.dart';
 import '../../Signup/signup_screen.dart';
 
 class LoginForm extends StatefulWidget {
@@ -20,8 +23,10 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   bool _obscureText = true;
+  String userType = "";
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
 
   @override
   void initState() {
@@ -101,15 +106,52 @@ class _LoginFormState extends State<LoginForm> {
                     password: _passwordController.text,
                     context: context);
                 print(user);
+
+                try {
+                  String searchField = "email";
+                  String? fieldValue = user?.email;
+
+                  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                      .collection("users")
+                      .where(searchField, isEqualTo: fieldValue)
+                      .get();
+
+                  if (querySnapshot.size > 0) {
+                    QueryDocumentSnapshot docSnapshot = querySnapshot.docs[0];
+                    Map<String, dynamic> dados = docSnapshot.data() as Map<String, dynamic>;
+                    String name = dados['firstName'];
+                    userType = dados['userType'];
+
+                    // Agora você tem os dados do usuário específico
+                    print("Nome do usuário: $name");
+                  } else {
+                    print("Usuário não encontrado.");
+                  }
+                } catch (e) {
+                  print('Erro ao obter documentos: $e');
+                }
+
                 if (user != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return const MenuScreen();
-                      },
-                    ),
-                  );
+                  if(userType == 'admin'){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const AdminNavigationMenu();
+                        },
+                      ),
+                    );
+                  }
+                  if(userType == 'cliente'){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const NavigationMenu();
+                        },
+                      ),
+                    );
+                  }
                 }
               },
               style: ButtonStyle(

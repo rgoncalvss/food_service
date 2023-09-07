@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:food_service_fetin/Screens/Cart/cart_screen.dart';
 import 'package:provider/provider.dart';
 import '../../AppState.dart';
-import '../../components/products.dart';
-import '../../components/products_type.dart';
+import 'components/products.dart';
+import 'components/products_type.dart';
+import 'components/restaurant_infos.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({Key? key}) : super(key: key);
@@ -15,117 +17,75 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
 
+  final List<Widget> _screens = [
+    const MenuScreen(),
+    const CartScreen(),
+    const MenuScreen(),
+  ];
+
   @override
   void initState() {
     super.initState();
-    getAllTaskProdutos();
+    refreshScreen(context);
   }
 
-  final String nomeEstabelecimento = "Food Service";
-  final String enderecoEstabelecimento = "Rua do Inatel, nº 1000";
-  final String telefoneEstabelecimento = "(35) 9 0000-0000";
-  final String tempoEstabelecimento = "30~40min. de espera";
+  final String establishmentName = "Food Service";
+  final String establishmentAddress = "Rua do Inatel, nº 1000";
+  final String establishmentTel = "(35) 9 0000-0000";
+  final String establishmentQueueTime = "30~40min. de espera";
 
   int stateTasks = 0;
-  int childCountLen2 = 0;
 
-  List<TaskProduto> taskProdutos_lanches = [
-    const TaskProduto(
-        "Lanche",
-        "Ingredientes: suco, abacate, abacaxi, maca, uva verde, agua, cerveja",
-        "RS 49,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 24,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 25,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 26,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 27,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 28,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 29,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 30,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 31,90",
-        "assets/images/hamburger_icon.webp"),
-    const TaskProduto("Lanche", "Ingredientes...", "RS 32,90",
-        "assets/images/hamburger_icon.webp"),
-  ];
+  List<Product> snacks = [];
+  List<Product> drinks = [];
+  List<Product> candies = [];
 
-  List<TaskProduto> taskProdutos_bebidas = [
-    const TaskProduto(
-        "Bebida", "Ingredientes...", "RS 4,90", "assets/images/drink_icon.png"),
-    const TaskProduto(
-        "Bebida", "Ingredientes...", "RS 5,90", "assets/images/drink_icon.png"),
-    const TaskProduto(
-        "Bebida", "Ingredientes...", "RS 6,90", "assets/images/drink_icon.png"),
-    const TaskProduto(
-        "Bebida", "Ingredientes...", "RS 7,90", "assets/images/drink_icon.png"),
-    const TaskProduto(
-        "Bebida", "Ingredientes...", "RS 8,90", "assets/images/drink_icon.png"),
-    const TaskProduto(
-        "Bebida", "Ingredientes...", "RS 9,90", "assets/images/drink_icon.png"),
-    const TaskProduto("Bebida", "Ingredientes...", "RS 10,90",
-        "assets/images/drink_icon.png"),
-    const TaskProduto("Bebida", "Ingredientes...", "RS 11,90",
-        "assets/images/drink_icon.png"),
-    const TaskProduto("Bebida", "Ingredientes...", "RS 12,90",
-        "assets/images/drink_icon.png"),
-    const TaskProduto("Bebida", "Ingredientes...", "RS 13,90",
-        "assets/images/drink_icon.png"),
-  ];
+  Future<void> refreshScreen(BuildContext context) async {
+    await getAllTaskProdutos();
 
-  List<TaskProduto> taskProdutos_doces = [
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 1,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 2,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 3,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 4,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 5,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 6,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 7,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 8,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 9,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 10,90", "assets/images/candy_icon.webp"),
-    const TaskProduto(
-        "Doce", "Ingredientes...", "RS 11,90", "assets/images/candy_icon.webp"),
-  ];
+    final appState = Provider.of<AppState>(context, listen: false);
+    appState.updateShowTasks(1, snacks.length);
 
-  List<TaskProduto> testeProdutos = [];
+    setState(() {
+    });
+  }
 
   Future<void> getAllTaskProdutos() async {
     try {
       QuerySnapshot querySnapshot =
-      await FirebaseFirestore.instance.collection("cardapio").get();
+      await FirebaseFirestore.instance.collection("menu").get();
+
+      snacks = [];
+      drinks = [];
+      candies = [];
 
       for (QueryDocumentSnapshot docSnapshot in querySnapshot.docs) {
-        Map<String, dynamic> dados = docSnapshot.data() as Map<String, dynamic>;
+        Map<String, dynamic> product = docSnapshot.data() as Map<String, dynamic>;
 
-        // Aqui você pode manipular cada documento individualmente
-        String nome = docSnapshot['nome'];
-        String ingredientes = docSnapshot['ingredientes'];
-        String urlFoto = docSnapshot['urlFoto'];
-        // ... outros atributos
+        String name = product['name'];
+        String ingredients = product['ingredients'];
+        String price = product['price'];
+        String picture = product['picture'];
+        String type = product['type'];
 
-        TaskProduto taskProduto =
-        TaskProduto(nome, ingredientes, "RS 19,90", urlFoto);
+        Product taskProduto =
+        Product(name, ingredients, price, picture, type);
 
-        testeProdutos.add(taskProduto);
+        switch(taskProduto.type){
+          case "Snack":
+            snacks.add(taskProduto);
+            break;
+          case "Drink":
+            drinks.add(taskProduto);
+            break;
+          case "Candy":
+            candies.add(taskProduto);
+            break;
+          default:
+            break;
+        }
       }
     } catch (e) {
-      // Trate qualquer erro ocorrido durante a obtenção dos documentos
       print('Erro ao obter documentos: $e');
     }
   }
@@ -136,16 +96,6 @@ class _MenuScreenState extends State<MenuScreen> {
     return Scaffold(
       //bottomNavigationBar: Row(children: [Icon(Icons.abc), Icon(Icons.ac_unit)],),
 
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.format_list_bulleted), label: "Cardápio"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart), label: "Carrinho"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil")
-        ],
-        backgroundColor: const Color.fromRGBO(255, 255, 128, 1),
-      ),
       body: Container(
         color: const Color.fromRGBO(255, 255, 128, 0.25),
         child: LayoutBuilder(
@@ -166,80 +116,11 @@ class _MenuScreenState extends State<MenuScreen> {
                   child: CustomScrollView(
                     slivers: [
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4)),
-                            child: Stack(
-                              fit: StackFit.loose,
-                              alignment: AlignmentDirectional.center,
-                              children: [
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: ColorFiltered(
-                                      colorFilter: ColorFilter.mode(
-                                          Colors.black.withOpacity(0.6),
-                                          BlendMode.darken),
-                                      child: Opacity(
-                                        opacity: 0.7,
-                                        child: Image.asset(
-                                          "assets/images/hamburger.jpg",
-                                          fit: BoxFit.cover,
-                                          height: 300,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 150,
-                                      width: 150,
-                                      child: ClipOval(
-                                        child: Image.asset(
-                                          "assets/images/logo.jpeg",
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 15),
-                                    Text(
-                                      nomeEstabelecimento,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      enderecoEstabelecimento,
-                                      style: const TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      telefoneEstabelecimento,
-                                      style: const TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      tempoEstabelecimento,
-                                      style: const TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
+                        child: restaurantInfos(
+                          establishmentName: establishmentName,
+                          establishmentAddress: establishmentAddress,
+                          establishmentTel: establishmentTel,
+                          establishmentQueueTime: establishmentQueueTime,
                         ),
                       ),
                       SliverAppBar(
@@ -248,12 +129,12 @@ class _MenuScreenState extends State<MenuScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              TaskTipoProduto("assets/images/hamburger_icon.webp",
-                                  1, testeProdutos.length),
-                              TaskTipoProduto("assets/images/drink_icon.png", 2,
-                                  taskProdutos_bebidas.length),
-                              TaskTipoProduto("assets/images/candy_icon.webp", 3,
-                                  taskProdutos_doces.length),
+                              ProductType("assets/images/hamburger_icon.webp",
+                                  1, snacks.length),
+                              ProductType("assets/images/drink_icon.png",
+                                  2, drinks.length),
+                              ProductType("assets/images/candy_icon.webp",
+                                  3, candies.length),
                             ],
                           ),
                         ),
@@ -268,28 +149,9 @@ class _MenuScreenState extends State<MenuScreen> {
                                   (BuildContext context, int index) {
                                 return Consumer<AppState>(builder: (context, appState, _) {
                                   stateTasks = appState.stateTaskProduto;
-                                  childCountLen2 = appState.childCountLen;
-                                  print("quantidade: $childCountLen2");
                                   return buildTaskProdutosList(index);
                                 });
                               }, childCount: Provider.of<AppState>(context).childCountLen)),
-                      SliverToBoxAdapter(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                          const MenuScreen()));
-                                },
-                                child: const Text("Mudar tela"))
-                          ],
-                        ),
-                      )
-                      //SliverList(delegate: SliverChildBuilderDelegate((context, index) {return ListTile(title: ,)}))
                     ],
                   ),
                 ),
@@ -303,19 +165,19 @@ class _MenuScreenState extends State<MenuScreen> {
     switch (stateTasks) {
       case 1:
       //return taskProdutos_lanches[index];
-        return testeProdutos[index];
+        return snacks[index];
         break;
 
       case 2:
-        return taskProdutos_bebidas[index];
+        return drinks[index];
         break;
 
       case 3:
-        return taskProdutos_doces[index];
+        return candies[index];
         break;
 
       default:
-        return taskProdutos_lanches[index];
+        return snacks[index];
         break;
     }
   }
